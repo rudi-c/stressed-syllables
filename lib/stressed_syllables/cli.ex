@@ -3,7 +3,7 @@ defmodule StressedSyllables.CLI do
   Handles the parsing of command-line arguments before running the main program
   """
 
-  def run(argv) do
+  def main(argv) do
     argv |> parse_args
   end
 

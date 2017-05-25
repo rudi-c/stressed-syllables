@@ -3,6 +3,7 @@ defmodule StressedSyllables.Mixfile do
 
   def project do
     [app: :stressed_syllables,
+     escript: escript_config(),
      version: "0.1.0",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
@@ -29,5 +30,9 @@ defmodule StressedSyllables.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     []
+  end
+
+  def escript_config do
+    [ main_module: StressedSyllables.CLI ]
   end
 end
