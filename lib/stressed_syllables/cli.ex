@@ -4,15 +4,29 @@ defmodule StressedSyllables.CLI do
   """
 
   def main(argv) do
-    argv |> parse_args
+    argv
+    |> parse_args
+    |> process
   end
 
   def parse_args(argv) do
     parse = OptionParser.parse(argv)
 
     case parse do
-      { _, [ filename ], _ } -> filename
+      { _, [ text ], _ } -> {:text, text}
       _ -> :help
     end
+  end
+
+  def process(:help) do
+    IO.puts """
+    Help: TODO
+    """
+    System.halt(0)
+  end
+
+  def process({:text, text}) do
+    # For now, assume text is only one word
+    IO.puts inspect StressedSyllables.Merriam.get_word(text)
   end
 end

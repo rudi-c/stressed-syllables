@@ -16,7 +16,7 @@ defmodule StressedSyllables.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger]]
+    [extra_applications: [:logger, :httpoison]]
   end
 
   # Dependencies can be Hex packages:
@@ -29,7 +29,10 @@ defmodule StressedSyllables.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      { :httpoison, "~> 0.11" },
+      { :floki, "~> 0.17" }
+    ]
   end
 
   def escript_config do
