@@ -26,7 +26,6 @@ defmodule StressedSyllables.CLI do
   end
 
   def process({:text, text}) do
-    # For now, assume text is only one word
-    IO.puts inspect StressedSyllables.Merriam.get_word(text)
+    StressedSyllables.Stressed.find_in_text(text)
   end
 end
