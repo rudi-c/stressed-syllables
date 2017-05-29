@@ -1,5 +1,7 @@
 defmodule Parallel do
-  @moduledoc """http://elixir-recipes.github.io/concurrency/parallel-map/"""
+  @moduledoc """
+  http://elixir-recipes.github.io/concurrency/parallel-map/
+  """
 
   def pmap(collection, func) do
     collection
