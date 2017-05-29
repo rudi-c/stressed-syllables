@@ -27,5 +27,6 @@ defmodule StressedSyllables.CLI do
 
   def process({:text, text}) do
     StressedSyllables.Stressed.find_in_text(text)
+    |> StressedSyllables.Formatter.print(text)
   end
 end
