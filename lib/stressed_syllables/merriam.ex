@@ -46,9 +46,21 @@ defmodule StressedSyllables.Merriam do
     syllables = text_in_node(node, ".word-syllables")
     pronounciation = text_in_node(node, ".pr")
     cond do
-      not Regex.match?(@pronounciation_regex, pronounciation) -> nil
-      String.contains?(pronounciation, "same as") -> nil
-      String.length(syllables) == 0 -> nil
+      not Regex.match?(@pronounciation_regex, pronounciation) ->
+        # The pronounciation data could be missing entirely
+        nil
+      String.contains?(pronounciation, "same as") ->
+        # TODO: We might not need to throw away this case
+        nil
+      String.starts_with?(pronounciation, "\\-") ->
+        # If the pronounciation starts with a dash, it is probable that it only
+        # contains a subset of the syllables which does not help us.
+        # e.g. Searching for "meaningful" returns results with "\mē-niŋ-fəl\"
+        # as expected, but also results with just "\-fəl\"
+        nil
+      String.length(syllables) == 0 ->
+        # Missing syllables
+        nil
       true ->
         parsed = parse_syllables(syllables)
         # This is to deal with situations such as searching for the word "file"
