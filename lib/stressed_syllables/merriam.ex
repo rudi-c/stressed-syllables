@@ -16,7 +16,7 @@ defmodule StressedSyllables.Merriam do
 
   def get_word(word) do
     word_url(word)
-    |> HTTPoison.get(@user_agent)
+    |> HTTPoison.get(@user_agent, [hackney: [{:follow_redirect, true}]])
     |> handle_response(word)
   end
 
@@ -29,8 +29,9 @@ defmodule StressedSyllables.Merriam do
     |> Utils.reject_map(fn node -> word_from_node(word, node) end)
   end
 
-  defp handle_response({_, %{status_code: _, body: body}}, _word) do
-    Logger.error body
+  defp handle_response({_, %{status_code: code, body: body}}, word) do
+    Logger.error "Error retrieving #{word}"
+    Logger.error inspect [status_code: code, body: body]
     :error
   end
 
@@ -64,7 +65,9 @@ defmodule StressedSyllables.Merriam do
   end
 
   defp parse_syllables(syllables) do
-    String.split(syllables, "·")
+    syllables
+    |> String.downcase
+    |> String.split("·")
   end
 
   defp parse_pronounciation(str) do
@@ -74,7 +77,10 @@ defmodule StressedSyllables.Merriam do
   end
 
   defp syllables_is_word_subset?(syllables, word) do
-    {:ok, regex} = syllables |> Enum.join(".*") |> Regex.compile
-    Regex.match?(regex, word)
+    {:ok, regex} =
+      syllables
+      |> Enum.join(".*")
+      |> Regex.compile
+    Regex.match?(regex, String.downcase(word))
   end
 end
