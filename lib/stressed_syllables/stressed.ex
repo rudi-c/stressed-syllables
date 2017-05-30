@@ -17,49 +17,63 @@ defmodule StressedSyllables.Stressed do
   end
 
   defp collapse_cases(:error) do
-    :error
+    nil
   end
 
   defp collapse_cases([]) do
     nil
   end
 
+  # When possible, we want to return {:syllables, syllables, stressed_index}
+  # Sometimes, we just return the phonetics directly {:phonetics, phonetics_list}
+  # This happens if:
+  # - For any reason, the syllables list are not all the same
+  # - The syllables list does not match the pronounciation
+  # - The pronunciation list does not have stressed syllables all at the same place
   defp collapse_cases(cases) do
     syllables_list = cases |> Enum.map(&(&1.syllables))
-    pronounciations = cases |> Enum.map(&(&1.pronounciation))
+    pronounciations =
+      cases
+      |> Enum.map(&(&1.pronounciation))
+      |> Enum.sort |> Enum.dedup
 
-    unless are_all_the_same(syllables_list) do
+    if not are_all_the_same(syllables_list) do
       Logger.error "Syllable lists not all the same"
       Logger.error inspect syllables_list
-    end
-    [syllables | _] = syllables_list
+      {:phonetics, pronounciations}
+    else
+      [syllables | _] = syllables_list
+      syllables_count = Kernel.length(syllables)
+      if Enum.any?(pronounciations, fn p -> Kernel.length(p) != syllables_count end) do
+        {:phonetics, pronounciations}
+      else
+        stress_indices =
+          pronounciations
+          |> Enum.map(&find_stress_index/1)
+          |> Enum.sort |> Enum.dedup
 
-    # TODO: Handle multiple possibilities for stressed indices
-    [stress_index | _] =
-      pronounciations
-      |> Enum.map(fn pronounciation ->
-        if Kernel.length(pronounciation) == Kernel.length(syllables) do
-          index = Enum.find_index(pronounciation, &is_stressed?/1)
-          if index == nil do
-            Logger.error "No stressed syllable found"
-            Logger.error inspect pronounciation
-          end
-          index
-        else
-          nil
+        case stress_indices do
+          [index] -> {:syllables, syllables, index}
+          _ -> {:phonetics, pronounciations}
         end
-      end)
-      |> Enum.sort
-      |> Enum.dedup
-
-    {syllables, stress_index}
+      end
+    end
   end
 
   defp are_all_the_same([head | tail]) do
     Enum.all?(tail, fn x -> x == head end)
   end
 
+  defp find_stress_index(pronounciation) do
+    index = Enum.find_index(pronounciation, &is_stressed?/1)
+    if index == nil do
+      Logger.error "No stressed syllable found"
+      Logger.error inspect pronounciation
+    end
+    index
+  end
+
   defp is_stressed?(phoneme) do
-      String.starts_with?(phoneme, "ˈ")
+    String.starts_with?(phoneme, "ˈ")
   end
 end

@@ -4,6 +4,8 @@ defmodule StressedSyllables.Formatter do
   """
 
   def print(words, text) do
+    IO.puts inspect words
+
     split_into_sections_by_words(words, text)
     |> Enum.map(&print_section/1)
 
@@ -31,10 +33,10 @@ defmodule StressedSyllables.Formatter do
   defp print_section({text, nil}) do
     IO.write text
   end
-  defp print_section({text, {_, nil}}) do
+  defp print_section({text, {:phonetics, _phonetics}}) do
     IO.write text
   end
-  defp print_section({text, {syllables, stress_index}}) do
+  defp print_section({text, {:syllables, syllables, stress_index}}) do
     {:ok, regex} =
       syllables
       |> Enum.with_index

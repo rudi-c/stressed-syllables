@@ -1,4 +1,6 @@
 defmodule StressedSyllables.Merriam do
+  require Logger
+
   @moduledoc """
   Load the Merriam-Webster page for a particular word and parses out
   the pronounciation and stressed syllables.
@@ -45,7 +47,8 @@ defmodule StressedSyllables.Merriam do
       end)
   end
 
-  defp handle_response({_, %{status_code: _, body: _body}}) do
+  defp handle_response({_, %{status_code: _, body: body}}) do
+    Logger.error body
     :error
   end
 
