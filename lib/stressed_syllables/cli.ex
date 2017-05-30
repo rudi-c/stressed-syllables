@@ -10,9 +10,12 @@ defmodule StressedSyllables.CLI do
   end
 
   def parse_args(argv) do
-    parse = OptionParser.parse(argv)
+    parse = OptionParser.parse(argv, switches: [ file: :string ],
+                                     aliases:  [ f: :file ])
 
     case parse do
+      { [ file: filename ], _, _ } ->
+        {:text, File.read! filename}
       { _, [ text ], _ } -> {:text, text}
       _ -> :help
     end
