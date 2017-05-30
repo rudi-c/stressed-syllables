@@ -51,10 +51,10 @@ defmodule StressedSyllables.Formatter do
     # Will only capture the location of the stressed syllable
     [{start, len}] = Regex.run(regex, text, return: :index, capture: :all_names)
 
-    IO.write String.slice(text, 0 .. start - 1)
+    IO.write String.slice(text, 0, start)
     IO.write "\e[4m"
-    IO.write String.slice(text, start .. start + len - 1)
+    IO.write String.slice(text, start, len)
     IO.write "\e[24m"
-    IO.write String.slice(text, start + len .. String.length(text) - 1)
+    IO.write String.slice(text, start + len, String.length(text) - (start + len))
   end
 end
