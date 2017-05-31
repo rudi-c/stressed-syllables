@@ -7,9 +7,6 @@ defmodule StressedSyllables.Formatter do
   @unbold "\e[24m"
 
   def print(words, text) do
-    IO.puts inspect Enum.chunk(String.codepoints(text), 10, 10, [])
-    IO.puts inspect words
-
     split_into_sections_by_words(words, text)
     |> Enum.map(fn section -> {section, section_length(section)} end)
     |> word_wrap(78)

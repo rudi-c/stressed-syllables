@@ -10,7 +10,7 @@ defmodule StressedSyllables.Stressed do
 
   def find_in_text(text) do
     Regex.scan(@word_splitter, text, return: :index)
-    |> Parallel.pmap(fn [{start, len}] ->
+    |> Parallel.progress_pmap(fn [{start, len}] ->
       {start, len, String.slice(text, start, len) |> StressedSyllables.Merriam.get_word}
     end)
     |> Enum.map(fn {start, len, cases} -> {start, len, collapse_cases(cases)} end)
