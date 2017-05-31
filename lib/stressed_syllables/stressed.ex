@@ -16,8 +16,12 @@ defmodule StressedSyllables.Stressed do
     |> Enum.map(fn {start, len, cases} -> {start, len, collapse_cases(cases)} end)
   end
 
+  defp collapse_cases(:not_found) do
+    :not_found
+  end
+
   defp collapse_cases(:error) do
-    nil
+    :not_found
   end
 
   defp collapse_cases([]) do

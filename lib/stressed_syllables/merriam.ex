@@ -29,6 +29,10 @@ defmodule StressedSyllables.Merriam do
     |> Utils.reject_map(fn node -> word_from_node(word, node) end)
   end
 
+  defp handle_response({_, %{status_code: 404, body: _body}}, _word) do
+    :not_found
+  end
+
   defp handle_response({_, %{status_code: code, body: body}}, word) do
     Logger.error "Error retrieving #{word}"
     Logger.error inspect [status_code: code, body: body]

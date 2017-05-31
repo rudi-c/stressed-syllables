@@ -68,6 +68,9 @@ defmodule StressedSyllables.Formatter do
   defp format_section({text, nil}) do
     text
   end
+  defp format_section({text, :not_found}) do
+    text
+  end
   defp format_section({text, {:phonetics, _phonetics}}) do
     text
   end
@@ -99,6 +102,9 @@ defmodule StressedSyllables.Formatter do
   defp nth_phonetic({_text, nil}, _n) do
     []
   end
+  defp nth_phonetic({_text, :not_found}, _n) do
+    ["?"]
+  end
   defp nth_phonetic({_text, {:phonetics, phonetics}}, n) do
     Enum.at(phonetics, n, [])
   end
@@ -108,6 +114,9 @@ defmodule StressedSyllables.Formatter do
 
   defp phonetics_count(nil) do
     0
+  end
+  defp phonetics_count(:not_found) do
+    1
   end
   defp phonetics_count({:phonetics, phonetics}) do
     length(phonetics)
