@@ -5,4 +5,14 @@ defmodule Utils do
     |> Enum.map(mapper)
     |> Enum.filter(fn val -> val != nil end)
   end
+
+  # This exists because Elixir ranges can't be empty, which means you
+  # have to special case the empty case all the time
+  def range(start, finish) do
+    if start == finish do
+      []
+    else
+      start..finish-1
+    end
+  end
 end

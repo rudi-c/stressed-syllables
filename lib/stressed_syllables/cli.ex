@@ -29,7 +29,9 @@ defmodule StressedSyllables.CLI do
   end
 
   def process({:text, text}) do
-    StressedSyllables.Stressed.find_in_text(text)
-    |> StressedSyllables.Formatter.print(text)
+    trimmed = String.trim(text)
+    trimmed
+    |> StressedSyllables.Stressed.find_in_text
+    |> StressedSyllables.Formatter.print(trimmed)
   end
 end

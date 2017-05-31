@@ -38,13 +38,13 @@ defmodule StressedSyllables.Stressed do
       |> Enum.sort |> Enum.dedup
 
     if not are_all_the_same(syllables_list) do
-      Logger.error "Syllable lists not all the same"
-      Logger.error inspect syllables_list
+      # Logger.error "Syllable lists not all the same"
+      # Logger.error inspect syllables_list
       {:phonetics, pronounciations}
     else
       [syllables | _] = syllables_list
-      syllables_count = Kernel.length(syllables)
-      if Enum.any?(pronounciations, fn p -> Kernel.length(p) != syllables_count end) do
+      syllables_count = length(syllables)
+      if Enum.any?(pronounciations, fn p -> length(p) != syllables_count end) do
         {:phonetics, pronounciations}
       else
         stress_indices =
