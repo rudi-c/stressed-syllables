@@ -1,0 +1,1 @@
+However, if you expect the file to be there, the bang variation is more useful as it raises a meaningful error message.
