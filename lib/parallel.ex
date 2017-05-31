@@ -25,7 +25,7 @@ defmodule Parallel do
   end
 
   # pmap with a progress bar
-  def progress_pmap(collection, func) do
+  def progress_pmap(collection, func, timeout \\ 15000) do
     total = length(collection)
     progress_bar = spawn(Parallel, :progress_bar, [self(), 0, total])
 
@@ -36,16 +36,16 @@ defmodule Parallel do
           send progress_bar, :increment
           result
         end)))
-      |> Enum.map(&Task.await/1)
+      |> Enum.map(fn task -> Task.await(task, timeout) end)
 
     receive do
       :finished -> result
     end
   end
 
-  def pmap(collection, func) do
+  def pmap(collection, func, timeout \\ 15000) do
     collection
     |> Enum.map(&(Task.async(fn -> func.(&1) end)))
-    |> Enum.map(&Task.await/1)
+    |> Enum.map(fn task -> Task.await(task, timeout) end)
   end
 end
