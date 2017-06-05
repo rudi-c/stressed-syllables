@@ -8,7 +8,19 @@ defmodule StressedSyllables.Stressed do
 
   @word_splitter ~r/[a-zA-Z]+/
 
-  def find_in_text(text) do
+  def find_stress(text) do
+    trimmed = String.trim(text)
+    trimmed
+    |> find_in_text
+    |> StressedSyllables.Formatter.print(trimmed)
+  end
+
+  def find_stress_file(filename) do
+    File.read!(filename)
+    |> find_stress
+  end
+
+  defp find_in_text(text) do
     Regex.scan(@word_splitter, text, return: :index)
     |> Parallel.progress_pmap(fn [{start, len}] ->
       {start, len, String.slice(text, start, len) |> StressedSyllables.Merriam.get_word}
