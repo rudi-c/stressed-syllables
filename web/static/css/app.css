@@ -1,1 +1,87 @@
-/* This file is for your main application css. */
+body {
+    margin: 0px;
+}
+
+html, body, section {
+  height: 100%;
+}
+
+body {
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 1.5rem;
+  text-shadow: 0 2px 2px #b6701e;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Pattern styles */
+.main {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.main > * {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.left-half {
+  background-color: #f9fafb;
+}
+
+.splitter {
+  background-color: #f3f5f6;
+  max-width: 5px;
+}
+
+.right-half {
+  background-color: #f9fafb;
+  padding: 1rem;
+}
+
+.text {
+  font-family: monospace;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #000000;
+  text-shadow: 1px 2px 2px #dddddd;
+}
+
+textarea {
+  padding: 1rem;
+  height: 100%;
+  background-color: transparent;
+
+  border: none;
+  overflow: auto;
+  outline: none;
+
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.footer {
+  display: flex;
+  background-color: #e1e1e1;
+  height: 50px;
+  padding: 10px;
+}
+
+.submit-btn {
+  color: #FFFFFF;
+  background-color: #4CAF50;
+  padding: 8px 16px;
+  display: inline-block;
+}
+
+.submit-btn:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19)
+}
+
