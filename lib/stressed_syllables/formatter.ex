@@ -3,10 +3,17 @@ defmodule StressedSyllables.Formatter do
   Prints stressed syllables in an easy-to-read format.
   """
 
-  @bold "\e[4m"
-  @unbold "\e[24m"
+  @term_underline_start "\e[4m"
+  @term_underline_end "\e[24m"
+  @web_underline_start "<u>"
+  @web_underline_end "</u>"
 
-  def print(words, text) do
+  def print_for_web(words, text) do
+    split_into_sections_by_words(words, text)
+    |> Enum.map(&format_for_web/1)
+  end
+
+  def print_for_terminal(words, text) do
     split_into_sections_by_words(words, text)
     |> Enum.map(fn section -> {section, section_length(section)} end)
     |> word_wrap(78)
@@ -52,17 +59,28 @@ defmodule StressedSyllables.Formatter do
 
       Enum.each(row, fn {section, len} ->
         phonetic = nth_phonetic(section, n)
-
-        output =
-          phonetic
-          |> Enum.map(&format_phoneme/1)
-          |> Enum.join("-")
-
+        output = format_phonetic(phonetic, @term_underline_start, @term_underline_end)
         IO.write with_n_spaces(output, len - phonetic_length(phonetic))
       end)
 
       IO.write("\n")
     end)
+  end
+
+  defp format_for_web({text, nil}) do
+    [text]
+  end
+  defp format_for_web({text, :not_found}) do
+    [text]
+  end
+  defp format_for_web({text, {:phonetics, phonetics}}) do
+    formatted = phonetics |> Enum.map(fn phonetic ->
+      format_phonetic(phonetic, @web_underline_start, @web_underline_end)
+    end)
+    [text | formatted]
+  end
+  defp format_for_web({text, {:syllables, syllables, stress_index}}) do
+    [surround_stress(text, syllables, stress_index, @web_underline_start, @web_underline_end)]
   end
 
   defp format_section({text, nil}) do
@@ -75,6 +93,10 @@ defmodule StressedSyllables.Formatter do
     text
   end
   defp format_section({text, {:syllables, syllables, stress_index}}) do
+    surround_stress(text, syllables, stress_index, @term_underline_start, @term_underline_end)
+  end
+
+  defp surround_stress(text, syllables, stress_index, start_tag, end_tag) do
     {:ok, regex} =
       syllables
       |> Enum.with_index
@@ -93,9 +115,9 @@ defmodule StressedSyllables.Formatter do
 
     # TODO: Support secondary stress
     String.slice(text, 0, start)
-    <> @bold
+    <> start_tag
     <> String.slice(text, start, len)
-    <> @unbold
+    <> end_tag
     <> String.slice(text, start + len, String.length(text) - (start + len))
   end
 
@@ -179,10 +201,16 @@ defmodule StressedSyllables.Formatter do
               [{section, len} | current_row], rows)
   end
 
-  defp format_phoneme(phoneme) do
+  defp format_phonetic(phonetic, start_tag, end_tag) do
+    phonetic
+    |> Enum.map(fn phoneme -> format_phoneme(phoneme, start_tag, end_tag) end)
+    |> Enum.join("-")
+  end
+
+  defp format_phoneme(phoneme, start_tag, end_tag) do
     without_stress = remove_stress_marker(phoneme)
     if String.starts_with?(phoneme, "ˈ") do
-      @bold <> without_stress <> @unbold
+      start_tag <> without_stress <> end_tag
     else
       without_stress
     end

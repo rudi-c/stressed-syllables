@@ -32,10 +32,10 @@ defmodule StressedSyllables do
   def find_stress(text) do
     trimmed = String.trim(text)
     StressedSyllables.Stressed.find_stress(trimmed)
-    |> StressedSyllables.Formatter.print(trimmed)
+    |> StressedSyllables.Formatter.print_for_terminal(trimmed)
   end
 
-  def find_stress_from_file(filename) do
+  def find_stress_in_file(filename) do
     File.read!(filename)
     |> find_stress
   end

@@ -4,8 +4,9 @@ defmodule StressedSyllables.ApiController do
   use StressedSyllables.Web, :controller
 
   def get_stress(conn, %{ "text" => text }) do
-    result = StressedSyllables.find_stress(text)
-    Logger.info inspect result
-    json conn, %{result: "TODO"}
+    result =
+      StressedSyllables.Stressed.find_stress(text)
+      |> StressedSyllables.Formatter.print_for_web(text)
+    json conn, %{result: result}
   end
 end
