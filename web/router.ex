@@ -19,8 +19,12 @@ defmodule StressedSyllables.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", StressedSyllables do
-  #   pipe_through :api
-  # end
+   # Other scopes may use custom stacks.
+   scope "/api", StressedSyllables do
+     pipe_through :api
+
+     scope "/v1" do
+       post "/get-stress", ApiController, :get_stress
+     end
+   end
 end

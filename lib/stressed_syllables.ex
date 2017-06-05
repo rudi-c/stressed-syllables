@@ -28,4 +28,15 @@ defmodule StressedSyllables do
     StressedSyllables.Endpoint.config_change(changed, removed)
     :ok
   end
+
+  def find_stress(text) do
+    trimmed = String.trim(text)
+    StressedSyllables.Stressed.find_stress(trimmed)
+    |> StressedSyllables.Formatter.print(trimmed)
+  end
+
+  def find_stress_from_file(filename) do
+    File.read!(filename)
+    |> find_stress
+  end
 end

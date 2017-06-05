@@ -9,15 +9,7 @@ defmodule StressedSyllables.Stressed do
   @word_splitter ~r/[a-zA-Z]+/
 
   def find_stress(text) do
-    trimmed = String.trim(text)
-    trimmed
-    |> find_in_text
-    |> StressedSyllables.Formatter.print(trimmed)
-  end
-
-  def find_stress_file(filename) do
-    File.read!(filename)
-    |> find_stress
+    String.trim(text) |> find_in_text
   end
 
   defp find_in_text(text) do
