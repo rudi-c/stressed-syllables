@@ -18,7 +18,7 @@ defmodule StressedSyllables.Formatter do
 
   def print_for_terminal(lines) do
     lines
-    |> Enum.map(fn { line, words } ->
+    |> Enum.each(fn { line, words } ->
       split_into_sections_by_words(words, line)
       |> Enum.map(fn section -> {section, section_length(section)} end)
       |> word_wrap(78)
