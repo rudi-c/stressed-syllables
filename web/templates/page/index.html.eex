@@ -10,7 +10,7 @@ Are Americans good at keeping records?</textarea>
       <div v-if="results">
         <template v-for="line in results">
           <div class="word" v-for="word in line">
-            <div v-for="item in word" v-html="item"></div>
+            <div class="option" v-for="item in word" v-html="item"></div>
           </div>
           <br />
         </template>

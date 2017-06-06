@@ -88,3 +88,7 @@ textarea {
   vertical-align: top;
   display: inline-block;
 }
+
+.word .option:not(:first-child) {
+    color: #888888;
+}
