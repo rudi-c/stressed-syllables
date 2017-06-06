@@ -31,7 +31,7 @@ defmodule StressedSyllables do
 
   def find_stress(text) do
     String.trim(text)
-    |> StressedSyllables.Stressed.find_stress
+    |> StressedSyllables.Stressed.find_stress(true)
     |> StressedSyllables.Formatter.print_for_terminal
   end
 

@@ -8,11 +8,11 @@ defmodule StressedSyllables.Stressed do
 
   @word_splitter ~r/[a-zA-Z]+/
 
-  def find_stress(text) do
-    String.trim(text) |> find_in_text
+  def find_stress(text, progress_bar \\ false) do
+    String.trim(text) |> find_in_text(progress_bar)
   end
 
-  defp find_in_text(text) do
+  defp find_in_text(text, progress_bar) do
     splitted_lines =
       String.split(text, "\n")
       |> Enum.map(fn line ->
@@ -30,7 +30,10 @@ defmodule StressedSyllables.Stressed do
       |> Enum.concat
       |> Enum.sort
       |> Enum.dedup
-      |> Parallel.progress_pmap(fn word ->
+
+    mapper = if progress_bar do &Parallel.progress_pmap/2 else &Parallel.pmap/2 end
+    processed_words_map =
+      mapper.(words, fn word ->
         { word, word |> StressedSyllables.Merriam.get_word |> collapse_cases }
       end)
       |> Map.new
@@ -40,7 +43,7 @@ defmodule StressedSyllables.Stressed do
       processed_pieces =
         Enum.map(pieces, fn { start, len } ->
           word = String.slice(line, start, len)
-          { start, len, Map.fetch!(words, word) }
+          { start, len, Map.fetch!(processed_words_map, word) }
         end)
       { line, processed_pieces }
     end)
