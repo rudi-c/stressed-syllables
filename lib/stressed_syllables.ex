@@ -30,9 +30,9 @@ defmodule StressedSyllables do
   end
 
   def find_stress(text) do
-    trimmed = String.trim(text)
-    StressedSyllables.Stressed.find_stress(trimmed)
-    |> StressedSyllables.Formatter.print_for_terminal(trimmed)
+    String.trim(text)
+    |> StressedSyllables.Stressed.find_stress
+    |> StressedSyllables.Formatter.print_for_terminal
   end
 
   def find_stress_in_file(filename) do

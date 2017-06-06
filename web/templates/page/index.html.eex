@@ -8,9 +8,12 @@ Are Americans good at keeping records?</textarea>
     <div class="splitter"></div>
     <div class="right-half text">
       <div v-if="results">
-        <div class="word" v-for="word in results">
-          <div v-for="item in word" v-html="item"></div>
-        </div>
+        <template v-for="line in results">
+          <div class="word" v-for="word in line">
+            <div v-for="item in word" v-html="item"></div>
+          </div>
+          <br />
+        </template>
       </div>
     </div>
   </div>

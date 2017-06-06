@@ -8,16 +8,22 @@ defmodule StressedSyllables.Formatter do
   @web_underline_start "<u>"
   @web_underline_end "</u>"
 
-  def print_for_web(words, text) do
-    split_into_sections_by_words(words, text)
-    |> Enum.map(&format_for_web/1)
+  def print_for_web(lines) do
+    lines
+    |> Enum.map(fn { line, words } ->
+      split_into_sections_by_words(words, line)
+      |> Enum.map(&format_for_web/1)
+    end)
   end
 
-  def print_for_terminal(words, text) do
-    split_into_sections_by_words(words, text)
-    |> Enum.map(fn section -> {section, section_length(section)} end)
-    |> word_wrap(78)
-    |> Enum.each(&print_row/1)
+  def print_for_terminal(lines) do
+    lines
+    |> Enum.map(fn { line, words } ->
+      split_into_sections_by_words(words, line)
+      |> Enum.map(fn section -> {section, section_length(section)} end)
+      |> word_wrap(78)
+      |> Enum.each(&print_row/1)
+    end)
   end
 
   defp split_into_sections_by_words([word = {start, _, _} | tail], text) when start > 0 do
@@ -38,6 +44,9 @@ defmodule StressedSyllables.Formatter do
     {[ {String.slice(text, start..start_of_next - 1), info} | output ], start}
   end
 
+  defp print_row([]) do
+    IO.write ">\n"
+  end
   defp print_row(row) do
     IO.write "> "
     Enum.each(row, fn {section = {text, _}, len} ->

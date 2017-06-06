@@ -13,11 +13,37 @@ defmodule StressedSyllables.Stressed do
   end
 
   defp find_in_text(text) do
-    Regex.scan(@word_splitter, text, return: :index)
-    |> Parallel.progress_pmap(fn [{start, len}] ->
-      {start, len, String.slice(text, start, len) |> StressedSyllables.Merriam.get_word}
+    splitted_lines =
+      String.split(text, "\n")
+      |> Enum.map(fn line ->
+        results =
+          Regex.scan(@word_splitter, line, return: :index)
+          |> Enum.map(fn [result] -> result end)
+        {line, results}
+      end)
+
+    words =
+      splitted_lines
+      |> Enum.map(fn { line, pieces } ->
+        Enum.map(pieces, fn {start, len} -> String.slice(line, start, len) end)
+      end)
+      |> Enum.concat
+      |> Enum.sort
+      |> Enum.dedup
+      |> Parallel.progress_pmap(fn word ->
+        { word, word |> StressedSyllables.Merriam.get_word |> collapse_cases }
+      end)
+      |> Map.new
+
+    splitted_lines
+    |> Enum.map(fn { line, pieces } ->
+      processed_pieces =
+        Enum.map(pieces, fn { start, len } ->
+          word = String.slice(line, start, len)
+          { start, len, Map.fetch!(words, word) }
+        end)
+      { line, processed_pieces }
     end)
-    |> Enum.map(fn {start, len, cases} -> {start, len, collapse_cases(cases)} end)
   end
 
   defp collapse_cases(:not_found) do

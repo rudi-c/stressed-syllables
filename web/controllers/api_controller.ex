@@ -5,8 +5,9 @@ defmodule StressedSyllables.ApiController do
 
   def get_stress(conn, %{ "text" => text }) do
     result =
-      StressedSyllables.Stressed.find_stress(text)
-      |> StressedSyllables.Formatter.print_for_web(text)
+      text
+      |> StressedSyllables.Stressed.find_stress
+      |> StressedSyllables.Formatter.print_for_web
     json conn, %{result: result}
   end
 end

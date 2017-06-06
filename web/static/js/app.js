@@ -14,6 +14,11 @@
 import "phoenix_html"
 import "vue-resource"
 
+function format_html_whitespaces(line) {
+    return line.map(word =>
+        word.map(item => item.replace(" ", "&nbsp;")));
+}
+
 var app = new Vue({
     el: '#app',
     data: {
@@ -24,9 +29,8 @@ var app = new Vue({
             var body = { text: this.$refs.text.value }
             this.$http.post('/api/v1/get-stress', body).then(response => {
                 // Whitespaces won't show up otherwise without this transformation
-                var formatted = response.body.result.map(word =>
-                        word.map(item => item.replace(" ", "&nbsp;")));
-                console.log(formatted);
+                var formatted = response.body.result.map(line =>
+                    format_html_whitespaces(line));
                 this.results = formatted;
             }, response => {
             });
