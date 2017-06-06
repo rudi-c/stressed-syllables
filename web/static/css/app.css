@@ -72,18 +72,19 @@ textarea {
 .footer {
   display: flex;
   background-color: #e1e1e1;
-  height: 50px;
+  height: 40px;
   padding: 10px;
 }
 
 .submit-btn {
+  font-family: monospace;
   color: #FFFFFF;
   background-color: #4CAF50;
   padding: 8px 16px;
   display: inline-block;
 }
 
-.submit-btn:hover {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19)
+.word {
+  vertical-align: top;
+  display: inline-block;
 }
-

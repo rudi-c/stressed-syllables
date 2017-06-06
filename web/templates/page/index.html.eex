@@ -1,14 +1,20 @@
-<section class="container">
+<section id="app" class="container">
   <div class="main">
     <div class="left-half">
-      <textarea class="text">Weekends don't count unless you spend them doing something completely pointless. Weekends don't count unless you spend them doing something completely pointless. Weekends don't count unless you spend them doing something completely pointless. Weekends don't count unless you spend them doing something completely pointless.</textarea>
+      <textarea class="text" ref="text">This is a sample text. Press "find stress" to find the stressed syllables in this short little text.
+
+Are Americans good at keeping records?</textarea>
     </div>
     <div class="splitter"></div>
     <div class="right-half text">
-      Weekends don't count unless you spend them doing something completely pointless. Weekends don't count unless you spend them doing something completely pointless. Weekends don't count unless you spend them doing something completely pointless. Weekends don't count unless you spend them doing something completely pointless.
+      <div v-if="results">
+        <div class="word" v-for="word in results">
+          <div v-for="item in word" v-html="item"></div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="footer">
-    <a class="submit-btn">Find stress >></a>
+    <button class="submit-btn" v-on:click="onSubmit">Find stress >></button>
   </div>
 </section>

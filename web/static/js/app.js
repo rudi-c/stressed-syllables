@@ -12,6 +12,27 @@
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
 import "phoenix_html"
+import "vue-resource"
+
+var app = new Vue({
+    el: '#app',
+    data: {
+        results: null
+    },
+    methods: {
+        onSubmit: function () {
+            var body = { text: this.$refs.text.value }
+            this.$http.post('/api/v1/get-stress', body).then(response => {
+                // Whitespaces won't show up otherwise without this transformation
+                var formatted = response.body.result.map(word =>
+                        word.map(item => item.replace(" ", "&nbsp;")));
+                console.log(formatted);
+                this.results = formatted;
+            }, response => {
+            });
+        }
+    }
+})
 
 // Import local files
 //
