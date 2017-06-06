@@ -84,7 +84,7 @@ defmodule StressedSyllables.Formatter do
   end
   defp format_for_web({text, {:phonetics, phonetics}}) do
     formatted = phonetics |> Enum.map(fn phonetic ->
-      format_phonetic(phonetic, @web_underline_start, @web_underline_end)
+      format_phonetic(phonetic, @web_underline_start, @web_underline_end) <> " "
     end)
     [text | formatted]
   end
