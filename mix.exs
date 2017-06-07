@@ -38,6 +38,7 @@ defmodule StressedSyllables.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
+     {:erlport, git: "https://github.com/hdima/erlport.git"},
      {:httpoison, "~> 0.11"},
      {:floki, "~> 0.17"}]
   end
