@@ -43,6 +43,8 @@ body {
 .right-half {
   background-color: #f9fafb;
   padding: 1rem;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .text {
