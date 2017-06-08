@@ -80,7 +80,7 @@ defmodule StressedSyllables.Formatter do
     [text]
   end
   defp format_for_web({text, :not_found}) do
-    [text]
+    [text, "?"]
   end
   defp format_for_web({text, {:phonetics, phonetics}}) do
     formatted = phonetics |> Enum.map(fn phonetic ->
