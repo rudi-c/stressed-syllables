@@ -28,8 +28,8 @@ defmodule StressedSyllables.Merriam do
     end
   end
 
-  def make_request(word, sender) do
-    GenServer.cast(__MODULE__, {:make_request, word, sender})
+  def make_request(word, sender, attempts \\ 0) do
+    GenServer.cast(__MODULE__, {:make_request, word, sender, attempts})
   end
 
   def handle_cast({:get_word, word, sender}, {running_requests, queue}) when running_requests < 20 do
@@ -40,19 +40,26 @@ defmodule StressedSyllables.Merriam do
     {:noreply, {running_requests, :queue.in({word, sender}, queue)}}
   end
 
-  def handle_cast({:make_request, word, sender}, {running_requests, queue}) do
+  def handle_cast({:make_request, word, sender, attempts}, {running_requests, queue}) do
     result =
       word_url(word)
       |> HTTPoison.get(@user_agent, [hackney: [{:follow_redirect, true}]])
       |> handle_response(word)
-    send sender, {:finished, word, result}
 
-    case :queue.out(queue) do
-      {{:value, {next_word, next_from}}, next_queue} ->
-        make_request(next_word, next_from)
-        {:noreply, {running_requests, next_queue}}
-      {:empty, next_queue} ->
-        {:noreply, {running_requests - 1, next_queue}}
+    case result do
+      :timeout when attempts < 3 ->
+        Logger.warn "Request for '#{word}' timed out, attempt ##{attempts}..."
+        make_request(word, sender, attempts + 1)
+      result ->
+        send sender, {:finished, word, result}
+
+        case :queue.out(queue) do
+          {{:value, {next_word, next_from}}, next_queue} ->
+            make_request(next_word, next_from)
+            {:noreply, {running_requests, next_queue}}
+          {:empty, next_queue} ->
+            {:noreply, {running_requests - 1, next_queue}}
+        end
     end
   end
 
@@ -65,13 +72,23 @@ defmodule StressedSyllables.Merriam do
     |> Utils.reject_map(fn node -> word_from_node(word, node) end)
   end
 
-  defp handle_response({_, %{status_code: 404, body: _body}}, _word) do
+  defp handle_response({:ok, %{status_code: 404, body: _body}}, _word) do
     :not_found
   end
 
-  defp handle_response({_, %{status_code: code, body: body}}, word) do
+  defp handle_response({:ok, %{status_code: code, body: body}}, word) do
     Logger.error "Error retrieving #{word}"
     Logger.error inspect [status_code: code, body: body]
+    :error
+  end
+
+  defp handle_response({:error, %{reason: :timeout}}, word) do
+    Logger.error "Timeout on retrieving #{word}"
+    :timeout
+  end
+
+  defp handle_response({:error, %{reason: reason}}, word) do
+    Logger.error "Error retrieving #{word} because #{reason}"
     :error
   end
 
