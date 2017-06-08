@@ -1,4 +1,5 @@
 defmodule StressedSyllables.Merriam do
+  use GenServer
   require Logger
 
   @moduledoc """
@@ -14,10 +15,45 @@ defmodule StressedSyllables.Merriam do
   @merriam_url "https://www.merriam-webster.com"
   @pronounciation_regex ~r/\\(.*)\\/
 
+  def start_link() do
+    GenServer.start_link(__MODULE__, {0, :queue.new}, name: __MODULE__)
+  end
+
   def get_word(word) do
-    word_url(word)
-    |> HTTPoison.get(@user_agent, [hackney: [{:follow_redirect, true}]])
-    |> handle_response(word)
+    GenServer.cast(__MODULE__, {:get_word, word, self()})
+    receive do
+      # TODO: Is it ever a problem if messages for the same word get mixed up?
+      # (not if there's only one call to get_word per process...)
+      {:finished, ^word, result} -> result
+    end
+  end
+
+  def make_request(word, sender) do
+    GenServer.cast(__MODULE__, {:make_request, word, sender})
+  end
+
+  def handle_cast({:get_word, word, sender}, {running_requests, queue}) when running_requests < 20 do
+    make_request(word, sender)
+    {:noreply, {running_requests + 1, queue}}
+  end
+  def handle_cast({:get_word, word, sender}, {running_requests, queue}) do
+    {:noreply, {running_requests, :queue.in({word, sender}, queue)}}
+  end
+
+  def handle_cast({:make_request, word, sender}, {running_requests, queue}) do
+    result =
+      word_url(word)
+      |> HTTPoison.get(@user_agent, [hackney: [{:follow_redirect, true}]])
+      |> handle_response(word)
+    send sender, {:finished, word, result}
+
+    case :queue.out(queue) do
+      {{:value, {next_word, next_from}}, next_queue} ->
+        make_request(next_word, next_from)
+        {:noreply, {running_requests, next_queue}}
+      {:empty, next_queue} ->
+        {:noreply, {running_requests - 1, next_queue}}
+    end
   end
 
   defp word_url(word) do

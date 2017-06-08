@@ -14,6 +14,7 @@ defmodule StressedSyllables do
       supervisor(StressedSyllables.Endpoint, []),
       # Start your own worker by calling: StressedSyllables.Worker.start_link(arg1, arg2, arg3)
       supervisor(StressedSyllables.NLP, []),
+      supervisor(StressedSyllables.Merriam, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
