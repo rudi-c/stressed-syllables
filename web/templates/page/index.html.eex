@@ -3,7 +3,11 @@
     <div class="left-half">
       <textarea class="text" ref="text">This is a sample text. Press "find stress" to find the stressed syllables in this short little text.
 
-Are Americans good at keeping records?</textarea>
+Are Americans good at keeping records? For the record, I am recording the answer.
+
+They conducted an investigation. It was exemplary conduct.
+
+This word does not exist: adsfghjkl</textarea>
     </div>
     <div class="splitter"></div>
     <div class="right-half text">

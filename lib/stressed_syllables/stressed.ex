@@ -6,12 +6,6 @@ defmodule StressedSyllables.Stressed do
   can find.
   """
 
-  @spacy_noun "NOUN"
-  @spacy_proper "PROPN"
-  @spacy_verb "VERB"
-  @spacy_pronoun "PRON"
-  @spacy_adverb "ADV"
-
   def find_stress(text, progress_bar \\ false) do
     String.trim(text) |> find_in_text(progress_bar)
   end
@@ -29,15 +23,21 @@ defmodule StressedSyllables.Stressed do
     mapper = if progress_bar do &Parallel.progress_pmap/2 else &Parallel.pmap/2 end
     processed_words_map =
       mapper.(words, fn word ->
-        { word, word |> StressedSyllables.Merriam.get_word |> collapse_cases }
+        { word, StressedSyllables.Merriam.get_word word }
       end)
       |> Map.new
 
     word_results =
       lines_of_words
       |> Enum.map(fn pieces ->
-        Enum.map(pieces, fn { word, start, _ } ->
-          { start, String.length(word), Map.fetch!(processed_words_map, word) }
+        Enum.map(pieces, fn { word, start, pofspeech } ->
+          { status, cases } =
+            Map.fetch!(processed_words_map, word)
+            |> filter_cases(pofspeech)
+          if status == :no_pof do
+            Logger.warn "No matching part of speech for '#{pofspeech}' for '#{word}'"
+          end
+          { start, String.length(word), cases }
         end)
       end)
 
@@ -45,16 +45,29 @@ defmodule StressedSyllables.Stressed do
     Enum.zip(splitted_lines, word_results)
   end
 
-  defp collapse_cases(:not_found) do
-    :not_found
+  defp filter_cases(:not_found, _pofspeech) do
+    {:ok, :not_found}
   end
 
-  defp collapse_cases(:error) do
-    :not_found
+  defp filter_cases(:error, _pofspeech) do
+    {:ok, :not_found}
   end
 
-  defp collapse_cases([]) do
-    nil
+  defp filter_cases([], _pofspeech) do
+    {:ok, nil}
+  end
+
+  defp filter_cases(cases, pofspeech) do
+    any_pofspeech_match =
+      cases |> Enum.any?(&(&1.pofspeech == pofspeech))
+    if any_pofspeech_match do
+      result = cases
+        |> Enum.filter(&(&1.pofspeech == pofspeech))
+        |> collapse_cases
+      {:ok, result}
+    else
+      {:no_pof, collapse_cases cases}
+    end
   end
 
   # When possible, we want to return {:syllables, syllables, stressed_index}
