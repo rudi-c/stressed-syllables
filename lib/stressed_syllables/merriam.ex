@@ -119,17 +119,22 @@ defmodule StressedSyllables.Merriam do
 
   def merriam_to_spacy(word, pofspeech) do
     case pofspeech do
-      "noun"      -> "NOUN"
-      "pronoun"   -> "PRON"
-      "adverb"    -> "ADV"
-      "verb"      -> "VERB"
-      "adjective" -> "ADJ"
+      "noun"        -> "NOUN"
+      "pronoun"     -> "PRON"
+      "adverb"      -> "ADV"
+      "verb"        -> "VERB"
+      "adjective"   -> "ADJ"
+      "conjunction" -> "ADP"
+      "preposition" -> "ADP"
       pofs ->
         cond do
-          # e.g. geographical name
+          # e.g. geographical name (e.g. yosemite)
           String.ends_with?(pofs, "name") -> "PNOUN"
           # e.g. transitive verb
           String.ends_with?(pofs, "verb") -> "VERB"
+          # e.g. noun, plural (e.g. fewer, politics)
+          # e.g. noun, often attributive (e.g. company)
+          String.contains?(pofs, "noun") -> "NOUN"
           true ->
             Logger.warn "Unknown type '#{pofspeech}' for '#{word}'"
             ""

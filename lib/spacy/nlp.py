@@ -26,7 +26,7 @@ def break_into_lines(tokens):
                 current_line = []
         else:
             assert newline_count == 0
-            if not pofspeech == "PUNCT":
+            if not pofspeech in ["PUNCT", "NUM", "SYM"]:
                 current_line.append((text, index - current_line_idx, pofspeech))
     lines.append(current_line)
     return lines
