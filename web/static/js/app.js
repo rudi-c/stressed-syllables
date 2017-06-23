@@ -14,6 +14,14 @@
 import "phoenix_html"
 import "vue-resource"
 
+var initial = `This is a sample text. Press "find stress" to find the stressed syllables in this short little text.
+
+Are Americans good at keeping records? For the record, I am recording the answer.
+
+They conducted an investigation. It was exemplary conduct.
+
+This word does not exist: adsfghjkl`;
+
 function format_html_whitespaces(line) {
     return line.map(word =>
         word.map(item => item.replace(" ", "&nbsp;")));
@@ -22,6 +30,7 @@ function format_html_whitespaces(line) {
 var app = new Vue({
     el: '#app',
     data: {
+        textinput: initial,
         results: null
     },
     methods: {

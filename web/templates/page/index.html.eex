@@ -1,13 +1,8 @@
 <section id="app" class="container">
   <div class="main">
     <div class="left-half">
-      <textarea class="text" ref="text">This is a sample text. Press "find stress" to find the stressed syllables in this short little text.
-
-Are Americans good at keeping records? For the record, I am recording the answer.
-
-They conducted an investigation. It was exemplary conduct.
-
-This word does not exist: adsfghjkl</textarea>
+      <textarea class="text" maxlength="1000" v-model="textinput" ref="text"></textarea>
+      <p class="wordcount">{{ textinput.length }} / 1000 chars</p>
     </div>
     <div class="splitter"></div>
     <div class="right-half text">
