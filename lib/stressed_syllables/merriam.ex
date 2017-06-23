@@ -14,11 +14,18 @@ defmodule StressedSyllables.Merriam do
   end
 
   def get_word(word) do
-    GenServer.cast(__MODULE__, {:get_word, word, self()})
-    receive do
-      # TODO: Is it ever a problem if messages for the same word get mixed up?
-      # (not if there's only one call to get_word per process...)
-      {:finished, ^word, result} -> result
+    cached_result = StressedSyllables.WordCache.get_word(word)
+    if cached_result == nil do
+      GenServer.cast(__MODULE__, {:get_word, word, self()})
+      receive do
+        # TODO: Is it ever a problem if messages for the same word get mixed up?
+        # (not if there's only one call to get_word per process...)
+        {:finished, ^word, result} ->
+          StressedSyllables.WordCache.store_word(word, result)
+          result
+      end
+    else
+      cached_result
     end
   end
 
