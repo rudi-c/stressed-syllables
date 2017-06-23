@@ -38,6 +38,7 @@ var app = new Vue({
         onSubmit: function () {
             var body = { text: this.$refs.text.value }
             this.loading = true;
+            this.results = "";
             this.$http.post('/api/v1/get-stress', body).then(response => {
                 // Whitespaces won't show up otherwise without this transformation
                 var formatted = response.body.result.map(line =>

@@ -15,4 +15,14 @@ defmodule Utils do
       start..finish-1
     end
   end
+
+  # Make the execution time of thunk take at least `ms` milliseconds
+  def throttle(thunk, ms) do
+    {time, result} = :timer.tc(thunk)
+    time_in_ms = round(time / 1000)
+    if time_in_ms < ms do
+      :ok = :timer.sleep(ms - time_in_ms)
+    end
+    result
+  end
 end
