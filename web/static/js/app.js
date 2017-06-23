@@ -31,17 +31,21 @@ var app = new Vue({
     el: '#app',
     data: {
         textinput: initial,
+        loading: false,
         results: null
     },
     methods: {
         onSubmit: function () {
             var body = { text: this.$refs.text.value }
+            this.loading = true;
             this.$http.post('/api/v1/get-stress', body).then(response => {
                 // Whitespaces won't show up otherwise without this transformation
                 var formatted = response.body.result.map(line =>
                     format_html_whitespaces(line));
                 this.results = formatted;
+                this.loading = false;
             }, response => {
+                this.loading = false;
             });
         }
     }
