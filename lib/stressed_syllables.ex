@@ -9,7 +9,7 @@ defmodule StressedSyllables do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the Ecto repository
-      supervisor(StressedSyllables.Repo, []),
+      # supervisor(StressedSyllables.Repo, []),
       # Start the endpoint when the application starts
       supervisor(StressedSyllables.Endpoint, []),
       # Start your own worker by calling: StressedSyllables.Worker.start_link(arg1, arg2, arg3)

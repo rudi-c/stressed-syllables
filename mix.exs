@@ -18,8 +18,8 @@ defmodule StressedSyllables.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {StressedSyllables, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :httpoison]]
+     extra_applications: [:logger]
+    ]
   end
 
   # Specifies which paths to compile per environment.
@@ -40,7 +40,9 @@ defmodule StressedSyllables.Mixfile do
      {:cowboy, "~> 1.0"},
      {:erlport, git: "https://github.com/hdima/erlport.git"},
      {:httpoison, "~> 0.11"},
-     {:floki, "~> 0.17"}]
+     {:floki, "~> 0.17"},
+     {:distillery, "~> 1.4", runtime: false},
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

@@ -2,11 +2,12 @@ defmodule StressedSyllables.NLP do
   use GenServer
   require Logger
 
-  @path Path.expand("lib/spacy")
   @script :nlp
 
   def start_link() do
-    opts = [{:python_path, to_char_list(@path)}]
+    spacy_path = to_char_list(Application.app_dir(:stressed_syllables, "priv/spacy"))
+    python_path = to_char_list(System.find_executable("python2"))
+    opts = [{:python_path, spacy_path}, {:python, python_path}]
     {:ok, python_process} = :python.start(opts)
     res = GenServer.start_link(__MODULE__, python_process, name: __MODULE__)
     GenServer.cast __MODULE__, :load_model

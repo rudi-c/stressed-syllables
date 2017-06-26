@@ -4,7 +4,8 @@ nlp = None
 
 def load_model():
     global nlp
-    nlp = spacy.load('en_core_web_sm')
+    #nlp = spacy.load('en_core_web_sm')
+    print "banana"
 
 def analyze_text(text):
     analyzed = nlp(unicode(text))
