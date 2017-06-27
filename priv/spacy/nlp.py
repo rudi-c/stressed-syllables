@@ -1,11 +1,10 @@
-import spacy
+import en_core_web_sm # spacy
 
 nlp = None
 
 def load_model():
     global nlp
-    #nlp = spacy.load('en_core_web_sm')
-    print "banana"
+    nlp = en_core_web_sm.load()
 
 def analyze_text(text):
     analyzed = nlp(unicode(text))
