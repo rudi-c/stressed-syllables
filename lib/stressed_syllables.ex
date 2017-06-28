@@ -1,5 +1,6 @@
 defmodule StressedSyllables do
   use Application
+  require Logger
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -17,6 +18,8 @@ defmodule StressedSyllables do
       supervisor(StressedSyllables.Merriam, []),
       supervisor(StressedSyllables.WordCache, []),
     ]
+
+    Logger.info "Started node #{Node.self()}"
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
