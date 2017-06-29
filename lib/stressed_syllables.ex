@@ -17,6 +17,8 @@ defmodule StressedSyllables do
       supervisor(StressedSyllables.NLP, []),
       supervisor(StressedSyllables.Merriam, []),
       supervisor(StressedSyllables.WordCache, []),
+      supervisor(StressedSyllables.LoadBalancer, []),
+      supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
     ]
 
     Logger.info "Started node #{Node.self()}"
