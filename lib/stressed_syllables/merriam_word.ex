@@ -6,6 +6,7 @@ defmodule StressedSyllables.MerriamWord do
   """
 
   defmodule Word do
+    @derive [Poison.Encoder]
     defstruct pofspeech: "", syllables: [], pronounciation: []
   end
 

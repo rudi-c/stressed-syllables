@@ -25,4 +25,8 @@ defmodule Utils do
     end
     result
   end
+
+  def is_master?() do
+    System.get_env("MASTER") == "true"
+  end
 end

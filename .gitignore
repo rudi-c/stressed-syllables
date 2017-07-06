@@ -28,6 +28,9 @@ erl_crash.dump
 /deploy.sh
 /stressed_syllables
 
+# Prod stuff
+/var/
+
 # Python
 __pycache__/
 *.py[cod]
