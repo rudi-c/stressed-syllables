@@ -13,8 +13,16 @@ defmodule StressedSyllables.ApiController do
   end
 
   def get_result(text) do
-    text
-    |> StressedSyllables.LoadBalancer.find_stress
-    |> StressedSyllables.Formatter.print_for_web
+    node = StressedSyllables.LoadBalancer.get_next_node()
+    result =
+      if node == Node.self() do
+        StressedSyllables.Stressed.find_stress(text)
+      else
+        Task.Supervisor.async({StressedSyllables.RemoteTasks, node},
+                              StressedSyllables.Stressed, :find_stress, [text])
+        |> Task.await(:infinity)
+      end
+
+    StressedSyllables.Formatter.print_for_web(result)
   end
 end

@@ -6,29 +6,23 @@ defmodule StressedSyllables.LoadBalancer do
     GenServer.start_link(__MODULE__, 0, name: __MODULE__)
   end
 
-  def find_stress(text) do
-    GenServer.call(__MODULE__, {:find_stress, text}, :infinity)
+  def get_next_node() do
+    GenServer.call(__MODULE__, :get_next_node, :infinity)
   end
 
-  def handle_call({:find_stress, text}, _from, next_node_index) do
+  def handle_call(:get_next_node, _from, node_index) do
     nodes = Node.list()
     cond do
-      next_node_index > length nodes ->
+      node_index > length nodes ->
         Logger.info "Load balancer reset, using node 0 (#{inspect self()})"
-        result = StressedSyllables.Stressed.find_stress(text)
-        {:reply, result, 0}
-      next_node_index == 0 ->
+        {:reply, Node.self(), 0}
+      node_index == 0 ->
         Logger.info "Load balancer, using node 0 (#{inspect self()})"
-        result = StressedSyllables.Stressed.find_stress(text)
-        {:reply, result, next_index(next_node_index, nodes)}
+        {:reply, Node.self(), next_index(node_index, nodes)}
       true ->
-        node = Enum.at(nodes, next_node_index - 1)
-        Logger.info "Load balancer, using node #{next_node_index} (#{inspect node})"
-        result =
-          Task.Supervisor.async({StressedSyllables.RemoteTasks, node},
-                                StressedSyllables.Stressed, :find_stress, [text])
-          |> Task.await(:infinity)
-        {:reply, result, next_index(next_node_index, nodes)}
+        node = Enum.at(nodes, node_index - 1)
+        Logger.info "Load balancer, using node #{node_index} (#{inspect node})"
+        {:reply, node, next_index(node_index, nodes)}
     end
   end
 
