@@ -14,25 +14,19 @@ defmodule StressedSyllables.WordCache do
   end
 
   def store_word(word, result) do
-    Logger.info "Storing word \"#{inspect word}\": #{inspect result}"
+    Logger.info "Storing word \"#{inspect word}\""
     GenServer.cast(__MODULE__, {:store_word, type_token(), word, result})
   end
 
   def update_cache(word, result) do
-    Logger.info "Updating cache \"#{inspect word}\": #{inspect result}"
+    Logger.info "Updating cache \"#{inspect word}\""
     GenServer.cast(__MODULE__, {:update_cache, word, result})
   end
 
-  def type_token() do
-    if Utils.is_master?() do
-      :master
-    else
-      :replica
-    end
-  end
-
-  def open_cache() do
-    File.open!(@cache, [:append, :utf8])
+  def send_all() do
+    Logger.info "Sending everything"
+    GenServer.cast(__MODULE__, :send_all)
+    Logger.info "Done sending everything"
   end
 
   def start_link() do
@@ -43,7 +37,9 @@ defmodule StressedSyllables.WordCache do
       end
 
       if File.exists?(@cache) do
-        GenServer.start_link(__MODULE__, {read_cache(), open_cache()}, name: __MODULE__)
+        ret = GenServer.start_link(__MODULE__, {read_cache(), open_cache()}, name: __MODULE__)
+        send_all()
+        ret
       else
         init_cache()
         GenServer.start_link(__MODULE__, {%{}, open_cache()}, name: __MODULE__)
@@ -54,7 +50,11 @@ defmodule StressedSyllables.WordCache do
         [_master] -> Logger.info "Starting replica cache - found master"
       end
 
-      GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+      ret = GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+
+      call_on_master(:send_all, [])
+
+      ret
     end
   end
 
@@ -67,27 +67,15 @@ defmodule StressedSyllables.WordCache do
   end
 
   def handle_cast({:store_word, :master, word, result}, {cache, file}) do
-    IO.puts(file, to_string(Poison.encode!(%{"word" => word, "result" => result})))
+    persist_word(file, word, result)
     # Send update to replica
-    case Node.list() do
-      [] -> :ok
-      [replica] ->
-        Task.Supervisor.async({StressedSyllables.RemoteTasks, replica},
-                              StressedSyllables.WordCache, :update_cache, [word, result])
-        |> Task.await(:infinity) # TODO: avoid awaiting?
-    end
+    call_on_replica(:update_cache, [word, result])
     {:noreply, {Map.put(cache, word, result), file}}
   end
 
   def handle_cast({:store_word, :replica, word, result}, cache) do
     # Send update to master
-    case Node.list() do
-      [] -> :ok
-      [master] ->
-        Task.Supervisor.async({StressedSyllables.RemoteTasks, master},
-                                         StressedSyllables.WordCache, :store_word, [word, result])
-        |> Task.await(:infinity)
-    end
+    call_on_master(:store_word, [word, result])
     {:noreply, cache}
   end
 
@@ -95,9 +83,50 @@ defmodule StressedSyllables.WordCache do
     {:noreply, Map.put(cache, word, result)}
   end
 
+  def handle_cast(:send_all, {cache, file}) do
+    Enum.each(cache, fn {word, result} ->
+      call_on_replica(:store_word, [word, result])
+    end)
+    {:noreply, {cache, file}}
+  end
+
+  defp call_on_master(function, args) do
+    case Node.list() do
+      [] -> :ok
+      [master] ->
+        Task.Supervisor.async({StressedSyllables.RemoteTasks, master},
+                               StressedSyllables.WordCache, function, args)
+    end
+  end
+
+  defp call_on_replica(function, args) do
+    case Node.list() do
+      [] -> :ok
+      [replica] ->
+        Task.Supervisor.async({StressedSyllables.RemoteTasks, replica},
+                               StressedSyllables.WordCache, function, args)
+    end
+  end
+
+  defp type_token() do
+    if Utils.is_master?() do
+      :master
+    else
+      :replica
+    end
+  end
+
+  defp open_cache() do
+    File.open!(@cache, [:append, :utf8])
+  end
+
   defp init_cache() do
     File.mkdir(Path.dirname(@cache))
     File.touch!(@cache)
+  end
+
+  defp persist_word(file, word, result) do
+    IO.puts(file, to_string(Poison.encode!(%{"word" => word, "result" => result})))
   end
 
   defp read_cache() do
