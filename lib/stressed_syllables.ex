@@ -8,18 +8,27 @@ defmodule StressedSyllables do
     import Supervisor.Spec
 
     # Define workers and child supervisors to be supervised
-    children = [
-      # Start the Ecto repository
-      # supervisor(StressedSyllables.Repo, []),
-      # Start the endpoint when the application starts
-      supervisor(StressedSyllables.Endpoint, []),
-      # Start your own worker by calling: StressedSyllables.Worker.start_link(arg1, arg2, arg3)
-      supervisor(StressedSyllables.NLP, []),
-      supervisor(StressedSyllables.Merriam, []),
-      supervisor(StressedSyllables.WordCache, []),
-      supervisor(StressedSyllables.LoadBalancer, []),
-      supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
-    ]
+    children = if Utils.is_master?() do
+      [
+        # Start the Ecto repository
+        # supervisor(StressedSyllables.Repo, []),
+        # Start the endpoint when the application starts
+        supervisor(StressedSyllables.Endpoint, []),
+        # Start your own worker by calling: StressedSyllables.Worker.start_link(arg1, arg2, arg3)
+        supervisor(StressedSyllables.NLP, []),
+        supervisor(StressedSyllables.Merriam, []),
+        supervisor(StressedSyllables.WordCache, []),
+        supervisor(StressedSyllables.LoadBalancer, []),
+        supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
+      ]
+    else
+      [
+        supervisor(StressedSyllables.NLP, []),
+        supervisor(StressedSyllables.Merriam, []),
+        supervisor(StressedSyllables.WordCache, []),
+        supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
+      ]
+    end
 
     Logger.info "Started node #{Node.self()}"
 
