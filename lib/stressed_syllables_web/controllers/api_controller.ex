@@ -1,4 +1,4 @@
-defmodule StressedSyllables.ApiController do
+defmodule StressedSyllablesWeb.ApiController do
   require Logger
 
   use StressedSyllables.Web, :controller

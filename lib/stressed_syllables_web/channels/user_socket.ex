@@ -1,4 +1,4 @@
-defmodule StressedSyllables.UserSocket do
+defmodule StressedSyllablesWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels

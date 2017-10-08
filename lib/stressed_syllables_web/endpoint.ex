@@ -1,7 +1,7 @@
-defmodule StressedSyllables.Endpoint do
+defmodule StressedSyllablesWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :stressed_syllables
 
-  socket "/socket", StressedSyllables.UserSocket
+  socket "/socket", StressedSyllablesWeb.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -38,5 +38,5 @@ defmodule StressedSyllables.Endpoint do
     key: "_stressed_syllables_key",
     signing_salt: "2mmhV71S"
 
-  plug StressedSyllables.Router
+  plug StressedSyllablesWeb.Router
 end

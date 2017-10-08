@@ -1,4 +1,4 @@
-defmodule StressedSyllables.PageController do
+defmodule StressedSyllablesWeb.PageController do
   use StressedSyllables.Web, :controller
 
   def index(conn, _params) do

@@ -10,10 +10,10 @@ config :stressed_syllables,
   ecto_repos: [StressedSyllables.Repo]
 
 # Configures the endpoint
-config :stressed_syllables, StressedSyllables.Endpoint,
+config :stressed_syllables, StressedSyllablesWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "lbQdWb7UaOkVLTZlPpC/HSuhs3LhC0OcUPYIuy/UHyzE4w6Y+HIn9ji2f1C9Ev3R",
-  render_errors: [view: StressedSyllables.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: StressedSyllablesWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: StressedSyllables.PubSub,
            adapter: Phoenix.PubSub.PG2]
 

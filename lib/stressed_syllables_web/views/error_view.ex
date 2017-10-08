@@ -1,4 +1,4 @@
-defmodule StressedSyllables.ErrorView do
+defmodule StressedSyllablesWeb.ErrorView do
   use StressedSyllables.Web, :view
 
   def render("404.html", _assigns) do

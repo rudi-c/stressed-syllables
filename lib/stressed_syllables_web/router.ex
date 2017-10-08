@@ -1,4 +1,4 @@
-defmodule StressedSyllables.Router do
+defmodule StressedSyllablesWeb.Router do
   use StressedSyllables.Web, :router
 
   pipeline :browser do
@@ -13,14 +13,14 @@ defmodule StressedSyllables.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", StressedSyllables do
+  scope "/", StressedSyllablesWeb do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
   end
 
    # Other scopes may use custom stacks.
-   scope "/api", StressedSyllables do
+   scope "/api", StressedSyllablesWeb do
      pipe_through :api
 
      scope "/v1" do

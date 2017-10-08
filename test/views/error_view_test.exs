@@ -1,5 +1,5 @@
 defmodule StressedSyllables.ErrorViewTest do
-  use StressedSyllables.ConnCase, async: true
+  use StressedSyllablesWeb.ConnCase, async: true
 
   # Bring render/3 and render_to_string/3 for testing custom views
   import Phoenix.View

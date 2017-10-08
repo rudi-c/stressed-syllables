@@ -1,5 +1,5 @@
 defmodule StressedSyllables.PageControllerTest do
-  use StressedSyllables.ConnCase
+  use StressedSyllablesWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get conn, "/"

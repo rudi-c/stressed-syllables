@@ -1,4 +1,4 @@
-defmodule StressedSyllables.ConnCase do
+defmodule StressedSyllablesWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -25,10 +25,10 @@ defmodule StressedSyllables.ConnCase do
       import Ecto.Changeset
       import Ecto.Query
 
-      import StressedSyllables.Router.Helpers
+      import StressedSyllablesWeb.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint StressedSyllables.Endpoint
+      @endpoint StressedSyllablesWeb.Endpoint
     end
   end
 

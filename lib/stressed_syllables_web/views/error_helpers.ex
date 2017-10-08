@@ -1,4 +1,4 @@
-defmodule StressedSyllables.ErrorHelpers do
+defmodule StressedSyllablesWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """

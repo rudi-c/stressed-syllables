@@ -28,20 +28,21 @@ defmodule StressedSyllables.Web do
 
   def controller do
     quote do
-      use Phoenix.Controller
+      use Phoenix.Controller, namespace: StressedSyllablesWeb
 
       alias StressedSyllables.Repo
       import Ecto
       import Ecto.Query
 
-      import StressedSyllables.Router.Helpers
-      import StressedSyllables.Gettext
+      import StressedSyllablesWeb.Router.Helpers
+      import StressedSyllablesWeb.Gettext
     end
   end
 
   def view do
     quote do
-      use Phoenix.View, root: "web/templates"
+      use Phoenix.View, root: "lib/stressed_syllables_web/templates",
+                        namespace: StressedSyllablesWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
@@ -49,9 +50,9 @@ defmodule StressedSyllables.Web do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import StressedSyllables.Router.Helpers
-      import StressedSyllables.ErrorHelpers
-      import StressedSyllables.Gettext
+      import StressedSyllablesWeb.Router.Helpers
+      import StressedSyllablesWeb.ErrorHelpers
+      import StressedSyllablesWeb.Gettext
     end
   end
 
@@ -68,7 +69,7 @@ defmodule StressedSyllables.Web do
       alias StressedSyllables.Repo
       import Ecto
       import Ecto.Query
-      import StressedSyllables.Gettext
+      import StressedSyllablesWeb.Gettext
     end
   end
 

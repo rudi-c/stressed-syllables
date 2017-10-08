@@ -1,3 +1,3 @@
 defmodule StressedSyllables.PageViewTest do
-  use StressedSyllables.ConnCase, async: true
+  use StressedSyllablesWeb.ConnCase, async: true
 end

@@ -1,3 +1,3 @@
 defmodule StressedSyllables.LayoutViewTest do
-  use StressedSyllables.ConnCase, async: true
+  use StressedSyllablesWeb.ConnCase, async: true
 end
