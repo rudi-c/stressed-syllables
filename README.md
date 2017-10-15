@@ -18,5 +18,16 @@ cd priv/spacy && ./setup.sh && cd -
 and run with
 
 ```
+# Master
+MASTER=true mix phoenix.server
+# Replica
 mix phoenix.server
 ```
+
+## Type checking
+
+Type checking can be done by running `mix dialyzer`. There may be some spurious warnings at the moment.
+
+## Testing
+
+Tests can be run with `mix test <file>`
