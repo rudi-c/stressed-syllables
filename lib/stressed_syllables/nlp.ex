@@ -5,8 +5,8 @@ defmodule StressedSyllables.NLP do
   @script :nlp
 
   def start_link() do
-    spacy_path = to_char_list(Application.app_dir(:stressed_syllables, "priv/spacy"))
-    python_path = to_char_list(Application.app_dir(:stressed_syllables, "priv/spacy/.env/bin/python"))
+    spacy_path = Kernel.to_charlist(Application.app_dir(:stressed_syllables, "priv/spacy"))
+    python_path = Kernel.to_charlist(Application.app_dir(:stressed_syllables, "priv/spacy/.env/bin/python"))
     opts = [{:python_path, spacy_path}, {:python, python_path}]
     {:ok, python_process} = :python.start(opts)
     res = GenServer.start_link(__MODULE__, python_process, name: __MODULE__)
