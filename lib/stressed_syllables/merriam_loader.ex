@@ -69,7 +69,7 @@ defmodule StressedSyllables.MerriamLoader do
   end
 
   defp handle_response({:ok, %{status_code: 200, body: body}}, word) do
-    Floki.find(body, ".word-attributes")
+    Floki.find(body, ".entry-attr")
     |> Utils.reject_map(fn node -> word_from_node(word, node) end)
   end
 
@@ -93,16 +93,20 @@ defmodule StressedSyllables.MerriamLoader do
     :error
   end
 
-  defp text_in_node(node, selector) do
-    Floki.find(node, selector)
+  defp text_in_node(node) do
+    node
     |> Floki.text
     |> String.trim
   end
 
   defp word_from_node(word, node) do
-    type = text_in_node(node, ".main-attr")
-    syllables = text_in_node(node, ".word-syllables")
-    pronounciation = text_in_node(node, ".pr")
-    StressedSyllables.MerriamWord.parse(word, type, syllables, pronounciation)
+    type = Floki.find(node, ".fl") |> text_in_node
+    syllables = Floki.find(node, ".word-syllables") |> text_in_node
+    # Just take the first one for now since it's most likely the more useful one
+    case Floki.find(node, ".pr") |> Enum.map(&text_in_node/1) do
+      [pronounciation|_] ->
+        StressedSyllables.MerriamWord.parse(word, type, syllables, pronounciation)
+      [] -> nil
+    end
   end
 end

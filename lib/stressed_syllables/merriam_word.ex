@@ -10,24 +10,22 @@ defmodule StressedSyllables.MerriamWord do
     defstruct pofspeech: "", syllables: [], pronounciation: []
   end
 
-  @pronounciation_regex ~r/\\(.*)\\/
 
   def parse(word, type, syllables, pronounciation) do
     cond do
-      not Regex.match?(@pronounciation_regex, pronounciation) ->
-        # The pronounciation data could be missing entirely
-        nil
       String.contains?(pronounciation, "same as") ->
         # TODO: We might not need to throw away this case
+        Logger.debug "Parsing #{word} failed: contains 'same as'"
         nil
       String.starts_with?(pronounciation, "\\-") ->
         # If the pronounciation starts with a dash, it is probable that it only
         # contains a subset of the syllables which does not help us.
         # e.g. Searching for "meaningful" returns results with "\mē-niŋ-fəl\"
         # as expected, but also results with just "\-fəl\"
+        Logger.debug "Parsing #{word} failed: pronounciation starts with dash, probably a subset"
         nil
       String.length(syllables) == 0 ->
-        # Missing syllables
+        Logger.debug "Parsing #{word} failed: no syllables"
         nil
       true ->
         parsed = parse_syllables(syllables)
@@ -37,9 +35,10 @@ defmodule StressedSyllables.MerriamWord do
         if syllables_is_word_subset?(parsed, word) do
           %Word{ pofspeech: spacy_pofspeech,
             syllables: parsed,
-            pronounciation: parse_pronounciation(pronounciation)
+            pronounciation: String.split(pronounciation, "-")
           }
         else
+          Logger.debug "Parsing #{word} failed: syllables are not a subset of the word"
           nil
         end
     end
@@ -74,12 +73,6 @@ defmodule StressedSyllables.MerriamWord do
     syllables
     |> String.downcase
     |> String.split("·")
-  end
-
-  defp parse_pronounciation(str) do
-    [_, pronounciation] = Regex.run(@pronounciation_regex, str)
-    [first | _ ] = String.split(pronounciation, [",", " also "])
-    String.split(first, "-")
   end
 
   defp syllables_is_word_subset?(syllables, word) do
