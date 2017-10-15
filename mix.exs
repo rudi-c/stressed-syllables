@@ -9,6 +9,7 @@ defmodule StressedSyllables.Mixfile do
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     dialyxir: [plt_add_deps: :transitive],
      aliases: aliases(),
      deps: deps()]
   end
@@ -42,6 +43,7 @@ defmodule StressedSyllables.Mixfile do
      {:httpoison, "~> 0.11"},
      {:floki, "~> 0.17"},
      {:distillery, "~> 1.4", runtime: false},
+     {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false},
     ]
   end
 

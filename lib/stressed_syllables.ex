@@ -16,7 +16,7 @@ defmodule StressedSyllables do
         supervisor(StressedSyllablesWeb.Endpoint, []),
         # Start your own worker by calling: StressedSyllables.Worker.start_link(arg1, arg2, arg3)
         supervisor(StressedSyllables.NLP, []),
-        supervisor(StressedSyllables.Merriam, []),
+        supervisor(StressedSyllables.MerriamLoader, []),
         supervisor(StressedSyllables.WordCache, []),
         supervisor(StressedSyllables.LoadBalancer, []),
         supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
@@ -24,7 +24,7 @@ defmodule StressedSyllables do
     else
       [
         supervisor(StressedSyllables.NLP, []),
-        supervisor(StressedSyllables.Merriam, []),
+        supervisor(StressedSyllables.MerriamLoader, []),
         supervisor(StressedSyllables.WordCache, []),
         supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
       ]
@@ -41,7 +41,7 @@ defmodule StressedSyllables do
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
-    StressedSyllables.Endpoint.config_change(changed, removed)
+    StressedSyllablesWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 

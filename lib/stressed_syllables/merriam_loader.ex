@@ -1,4 +1,4 @@
-defmodule StressedSyllables.Merriam do
+defmodule StressedSyllables.MerriamLoader do
   use GenServer
   require Logger
 

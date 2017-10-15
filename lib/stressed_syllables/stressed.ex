@@ -23,7 +23,7 @@ defmodule StressedSyllables.Stressed do
     mapper = if progress_bar do &Parallel.progress_pmap/2 else &Parallel.pmap/2 end
     processed_words_map =
       mapper.(words, fn word ->
-        { word, StressedSyllables.Merriam.get_word word }
+        { word, StressedSyllables.MerriamLoader.get_word word }
       end)
       |> Map.new
 
