@@ -1,4 +1,6 @@
 defmodule StressedSyllables.Formatter do
+  alias StressedSyllables.Stressed.WordStressData
+
   @moduledoc """
   Prints stressed syllables in an easy-to-read format.
   """
@@ -8,6 +10,7 @@ defmodule StressedSyllables.Formatter do
   @web_underline_start "<u>"
   @web_underline_end "</u>"
 
+  @spec print_for_web(list({String.t, list(%WordStressData{})})) :: any
   def print_for_web(lines) do
     lines
     |> Enum.map(fn { line, words } ->
@@ -16,6 +19,7 @@ defmodule StressedSyllables.Formatter do
     end)
   end
 
+  @spec print_for_terminal(list({String.t, list(%WordStressData{})})) :: no_return
   def print_for_terminal(lines) do
     lines
     |> Enum.each(fn { line, words } ->
@@ -26,7 +30,8 @@ defmodule StressedSyllables.Formatter do
     end)
   end
 
-  defp split_into_sections_by_words([word = {start, _, _} | tail], text) when start > 0 do
+  defp split_into_sections_by_words([word = %WordStressData{start: start}| tail], text)
+  when start > 0 do
     {output, start_of_next} = _split_into_sections_by_words([word | tail], text)
     [ {String.slice(text, 0..start_of_next - 1), nil} | output ]
   end
@@ -40,8 +45,7 @@ defmodule StressedSyllables.Formatter do
   end
   defp _split_into_sections_by_words([word | tail], text) do
     {output, start_of_next} = _split_into_sections_by_words(tail, text)
-    {start, _, info} = word
-    {[ {String.slice(text, start..start_of_next - 1), info} | output ], start}
+    {[ {String.slice(text, word.start..start_of_next - 1), word.stress_information} | output ], word.start}
   end
 
   defp print_row([]) do
@@ -76,10 +80,10 @@ defmodule StressedSyllables.Formatter do
     end)
   end
 
-  defp format_for_web({text, nil}) do
+  defp format_for_web({text, :no_case}) do
     [text]
   end
-  defp format_for_web({text, :not_found}) do
+  defp format_for_web({text, :word_not_found}) do
     [text, "?"]
   end
   defp format_for_web({text, {:phonetics, phonetics}}) do
@@ -92,10 +96,10 @@ defmodule StressedSyllables.Formatter do
     [surround_stress(text, syllables, stress_index, @web_underline_start, @web_underline_end)]
   end
 
-  defp format_section({text, nil}) do
+  defp format_section({text, :no_case}) do
     text
   end
-  defp format_section({text, :not_found}) do
+  defp format_section({text, :word_not_found}) do
     text
   end
   defp format_section({text, {:phonetics, _phonetics}}) do
@@ -130,10 +134,10 @@ defmodule StressedSyllables.Formatter do
     <> String.slice(text, start + len, String.length(text) - (start + len))
   end
 
-  defp nth_phonetic({_text, nil}, _n) do
+  defp nth_phonetic({_text, :no_case}, _n) do
     []
   end
-  defp nth_phonetic({_text, :not_found}, _n) do
+  defp nth_phonetic({_text, :word_not_found}, _n) do
     ["?"]
   end
   defp nth_phonetic({_text, {:phonetics, phonetics}}, n) do
@@ -143,10 +147,10 @@ defmodule StressedSyllables.Formatter do
     []
   end
 
-  defp phonetics_count(nil) do
+  defp phonetics_count(:no_case) do
     0
   end
-  defp phonetics_count(:not_found) do
+  defp phonetics_count(:word_not_found) do
     1
   end
   defp phonetics_count({:phonetics, phonetics}) do

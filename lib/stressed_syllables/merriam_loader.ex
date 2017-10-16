@@ -9,10 +9,12 @@ defmodule StressedSyllables.MerriamLoader do
   @user_agent [ {"User-agent", "Elixir"}]
   @merriam_url "https://www.merriam-webster.com"
 
+  @spec start_link() :: {:ok, pid}
   def start_link() do
     GenServer.start_link(__MODULE__, {0, :queue.new}, name: __MODULE__)
   end
 
+  @spec get_word(String.t) :: %StressedSyllables.MerriamWord.Word{}
   def get_word(word) do
     cached_result = StressedSyllables.WordCache.get_word(word)
     if cached_result == nil do

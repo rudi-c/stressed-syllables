@@ -9,22 +9,22 @@ defmodule StressedSyllables.MerriamWord do
     defstruct pofspeech: "", syllables: [], pronounciation: []
   end
 
-
+  @spec parse(String.t, String.t, String.t, String.t) :: (%Word{}) | nil
   def parse(word, type, syllables, pronounciation) do
     cond do
       String.contains?(pronounciation, "same as") ->
         # TODO: We might not need to throw away this case
-        Logger.debug "Parsing #{word} failed: contains 'same as'"
+        Logger.debug "Parsing '#{word}' failed: contains 'same as'"
         nil
       String.starts_with?(pronounciation, "-") ->
         # If the pronounciation starts with a dash, it is probable that it only
         # contains a subset of the syllables which does not help us.
         # e.g. Searching for "meaningful" returns results with "\mē-niŋ-fəl\"
         # as expected, but also results with just "\-fəl\"
-        Logger.debug "Parsing #{word} failed: pronounciation starts with dash, probably a subset"
+        Logger.debug "Parsing '#{word}' failed: pronounciation starts with dash, probably a subset"
         nil
       String.length(syllables) == 0 ->
-        Logger.debug "Parsing #{word} failed: no syllables"
+        Logger.debug "Parsing '#{word}' failed: no syllables"
         nil
       true ->
         parsed = parse_syllables(syllables)
@@ -37,12 +37,13 @@ defmodule StressedSyllables.MerriamWord do
             pronounciation: String.split(pronounciation, "-")
           }
         else
-          Logger.debug "Parsing #{word} failed: syllables are not a subset of the word"
+          Logger.debug "Parsing '#{word}' failed: syllables are not a subset of the word"
           nil
         end
     end
   end
 
+  @spec merriam_to_spacy(String.t, String.t) :: String.t
   defp merriam_to_spacy(word, pofspeech) do
     case pofspeech do
       "noun"        -> "NOUN"
@@ -68,12 +69,14 @@ defmodule StressedSyllables.MerriamWord do
     end
   end
 
+  @spec parse_syllables(String.t) :: list(String.t)
   defp parse_syllables(syllables) do
     syllables
     |> String.downcase
     |> String.split("·")
   end
 
+  @spec syllables_is_word_subset?(list(String.t), String.t) :: boolean
   defp syllables_is_word_subset?(syllables, word) do
     {:ok, regex} =
       syllables
