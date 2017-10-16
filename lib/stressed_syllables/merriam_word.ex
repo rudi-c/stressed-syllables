@@ -16,7 +16,7 @@ defmodule StressedSyllables.MerriamWord do
         # TODO: We might not need to throw away this case
         Logger.debug "Parsing #{word} failed: contains 'same as'"
         nil
-      String.starts_with?(pronounciation, "\\-") ->
+      String.starts_with?(pronounciation, "-") ->
         # If the pronounciation starts with a dash, it is probable that it only
         # contains a subset of the syllables which does not help us.
         # e.g. Searching for "meaningful" returns results with "\mē-niŋ-fəl\"

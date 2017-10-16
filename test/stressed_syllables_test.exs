@@ -10,7 +10,7 @@ defmodule StressedSyllablesTest do
       "constitution",
       "noun",
       "con·sti·tu·tion",
-      "\\ˌkän(t)-stə-ˈtü-shən, -ˈtyü-\\")
+      "ˌkän(t)-stə-ˈtü-shən")
     %Word{ pofspeech: pofspeech, syllables: syllables, pronounciation: pronounciation } = result
     assert pofspeech == "NOUN"
     assert syllables == ["con", "sti", "tu", "tion"]
@@ -22,7 +22,7 @@ defmodule StressedSyllablesTest do
       "colorado",
       "name",
       "Col·o·ra·do",
-      "\\ˌkä-lə-ˈra-(ˌ)dō, chiefly by outsiders -ˈrä-\\")
+      "ˌkä-lə-ˈra-(ˌ)dō")
     %Word{ pofspeech: pofspeech } = result
     assert pofspeech == "PNOUN"
   end
@@ -32,7 +32,7 @@ defmodule StressedSyllablesTest do
       "politics",
       "noun, plural in form but singular or plural in construction",
       "pol·i·tics",
-      "\\ˈpä-lə-ˌtiks\\")
+      "ˈpä-lə-ˌtiks")
     %Word{ pofspeech: pofspeech } = result
     assert pofspeech == "NOUN"
   end
@@ -42,7 +42,7 @@ defmodule StressedSyllablesTest do
       "company",
       "noun, often attributive",
       "com·pa·ny",
-      "\\ˈkəmp-nē, ˈkəm-pə-\\")
+      "ˈkəmp-nē")
     %Word{ pofspeech: pofspeech } = result
     assert pofspeech == "NOUN"
   end
@@ -58,7 +58,7 @@ defmodule StressedSyllablesTest do
       "meaningful",
       "adjective",
       "mean·ing·ful",
-      "\\-fəl\\")
+      "-fəl")
     assert result == nil
   end
 
@@ -67,7 +67,7 @@ defmodule StressedSyllablesTest do
       "or",
       "conjunction",
       "",
-      "\\ər, ˈȯr, Southern also ˈär\\")
+      "ər")
     assert result == nil
   end
 end

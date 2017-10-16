@@ -7,7 +7,8 @@ use Mix.Config
 
 # General application configuration
 config :stressed_syllables,
-  ecto_repos: [StressedSyllables.Repo]
+  ecto_repos: []
+  # ecto_repos: [StressedSyllables.Repo]
 
 # Configures the endpoint
 config :stressed_syllables, StressedSyllablesWeb.Endpoint,
