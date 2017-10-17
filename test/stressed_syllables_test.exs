@@ -5,6 +5,11 @@ defmodule StressedSyllablesTest do
   alias StressedSyllables.MerriamWord.Word
   import StressedSyllables.MerriamWord, only: [ parse: 4 ]
 
+  alias StressedSyllables.Stressed.WordStressData
+  import StressedSyllables.Stressed, only: [ get_stress_information: 2 ]
+
+  alias StressedSyllables.NLP.WordInfo
+
   test "parse a normal word" do
     result = parse(
       "constitution",
@@ -15,6 +20,18 @@ defmodule StressedSyllablesTest do
     assert pofspeech == "NOUN"
     assert syllables == ["con", "sti", "tu", "tion"]
     assert pronounciation == ["ˌkän(t)", "stə", "ˈtü", "shən"]
+  end
+
+  test "parse word alternate syllable" do
+    result = parse(
+      "entirely",
+      "adverb",
+      "en·tire·ly",
+      "in-ˈtī(-ə)r-lē")
+    %Word{ pofspeech: pofspeech, syllables: syllables, pronounciation: pronounciation } = result
+    assert pofspeech == "ADV"
+    assert syllables == ["en", "tire", "ly"]
+    assert pronounciation == ["in", "ˈtīr", "lē"]
   end
 
   test "parse geographical name" do
@@ -69,5 +86,19 @@ defmodule StressedSyllablesTest do
       "",
       "ər")
     assert result == nil
+  end
+
+  test "find stress with where a definition is only secondary stress" do
+    result = get_stress_information(
+      %WordInfo{ word: "during", index: -1, pofspeech: "ADP" },
+      %{
+        "during" => [
+          %Word{ pofspeech: "ADP", syllables: ["dur", "ing"], pronounciation: ["ˈdu̇r", "iŋ"] },
+          %Word{ pofspeech: "ADP", syllables: ["dur", "ing"], pronounciation: ["ˌdu̇r", "iŋ"] }
+        ]
+      }
+    )
+    %WordStressData{ stress_information: stress_information } = result
+    assert stress_information == {:syllables, ["dur", "ing"], 0}
   end
 end

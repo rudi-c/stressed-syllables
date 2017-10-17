@@ -15,7 +15,7 @@ defmodule StressedSyllables.Stressed do
 
   @type stress_information :: {:syllables, list(String.t), integer}
                             | {:phonetics, list(String.t)}
-  @type processed_words_map :: %{required(String.t) => %Word{}}
+  @type processed_words_map :: %{required(String.t) => list(%Word{})}
 
   def find_stress(text, progress_bar \\ false) do
     String.trim(text) |> find_in_text(progress_bar)
@@ -82,15 +82,24 @@ defmodule StressedSyllables.Stressed do
   defp filter_cases(cases, word_info) do
     any_pofspeech_match =
       cases |> Enum.any?(&(&1.pofspeech == word_info.pofspeech))
-    if any_pofspeech_match do
-      result = cases
-        |> Enum.filter(&(&1.pofspeech == word_info.pofspeech))
-        |> collapse_cases
-      result
-    else
-      Logger.warn "No matching part of speech for '#{word_info.pofspeech}' for '#{word_info.word}'"
-      collapse_cases cases
+    cond do
+      any_pofspeech_match ->
+        cases
+          |> Enum.filter(&(&1.pofspeech == word_info.pofspeech))
+          |> collapse_cases
+      use_verb_fallback(cases, word_info) ->
+        Logger.warn "Using verb fallback for '#{word_info.word}'"
+        cases
+          |> Enum.filter(&(&1.pofspeech == "VERB"))
+          |> collapse_cases
+      true ->
+        Logger.warn "No matching part of speech for '#{word_info.pofspeech}' for '#{word_info.word}'"
+        collapse_cases cases
     end
+  end
+
+  defp use_verb_fallback(_cases, word_info) do
+    word_info.pofspeech == "ADJ"
   end
 
   # When possible, we want to return {:syllables, syllables, stressed_index}
@@ -135,15 +144,24 @@ defmodule StressedSyllables.Stressed do
   end
 
   defp find_stress_index(pronounciation) do
-    index = Enum.find_index(pronounciation, &is_stressed?/1)
+    index = Enum.find_index(pronounciation, &is_primary_stress?/1)
     if index == nil do
-      Logger.error "No stressed syllable found"
-      Logger.error inspect pronounciation
+      index = Enum.find_index(pronounciation, &is_secondary_stress?/1)
+      if index == nil do
+        Logger.warn "No stressed syllable found"
+        Logger.warn inspect pronounciation
+      end
+      index
+    else
+      index
     end
-    index
   end
 
-  defp is_stressed?(phoneme) do
+  defp is_primary_stress?(phoneme) do
     String.starts_with?(phoneme, "ˈ")
+  end
+
+  defp is_secondary_stress?(phoneme) do
+    String.starts_with?(phoneme, "ˌ")
   end
 end
