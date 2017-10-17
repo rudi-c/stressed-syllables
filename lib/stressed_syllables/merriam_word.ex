@@ -34,7 +34,7 @@ defmodule StressedSyllables.MerriamWord do
         if syllables_is_word_subset?(parsed, word) do
           %Word{ pofspeech: spacy_pofspeech,
             syllables: parsed,
-            pronounciation: String.split(pronounciation, "-")
+            pronounciation: parse_pronounciation(pronounciation)
           }
         else
           Logger.debug "Parsing '#{word}' failed: syllables are not a subset of the word"
@@ -74,6 +74,16 @@ defmodule StressedSyllables.MerriamWord do
     syllables
     |> String.downcase
     |> String.split("·")
+  end
+
+  # Most of the time, each pronounciation comes is its own .pr tag,
+  # but sometimes you still get something like
+  # <span class="pr">something also something</span> so you still need to do
+  # the work of splitting by commas and "also"s
+  @spec parse_pronounciation(String.t) :: list(String.t)
+  defp parse_pronounciation(pronounciation) do
+    [first | _ ] = String.split(pronounciation, [",", " also "])
+    String.split(first, "-")
   end
 
   @spec syllables_is_word_subset?(list(String.t), String.t) :: boolean
