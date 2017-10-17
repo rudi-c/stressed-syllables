@@ -19,7 +19,7 @@ defmodule StressedSyllablesTest do
     %Word{ pofspeech: pofspeech, syllables: syllables, pronounciation: pronounciation } = result
     assert pofspeech == "NOUN"
     assert syllables == ["con", "sti", "tu", "tion"]
-    assert pronounciation == ["ˌkän(t)", "stə", "ˈtü", "shən"]
+    assert pronounciation == ["ˌkän", "stə", "ˈtü", "shən"]
   end
 
   test "parse word alternate syllable" do
@@ -77,6 +77,26 @@ defmodule StressedSyllablesTest do
       "mean·ing·ful",
       "-fəl")
     assert result == nil
+  end
+
+  test "parse word with pronounciation data containing 'also'" do
+    result = parse(
+      "conduct",
+      "noun",
+      "con·duct",
+      "kən-ˈdəkt also ˈkän-ˌdəkt")
+    %Word{ pronounciation: pronounciation } = result
+    pronounciation == ["kən", "ˈdəkt"]
+  end
+
+  test "parse word with pronounciation data containing semicolon" do
+    result = parse(
+      "interest",
+      "noun",
+      "in·ter·est",
+      "ˈin-t(ə-)rəst;")
+    %Word{ pronounciation: pronounciation } = result
+    pronounciation == ["ˈin", "trəst"]
   end
 
   test "parse word with no syllables" do

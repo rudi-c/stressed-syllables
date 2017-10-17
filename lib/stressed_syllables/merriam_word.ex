@@ -79,14 +79,14 @@ defmodule StressedSyllables.MerriamWord do
   # Most of the time, each pronounciation comes is its own .pr tag,
   # but sometimes you still get something like
   # <span class="pr">something also something</span> so you still need to do
-  # the work of splitting by commas and "also"s
+  # the work of splitting by commas, semicolons and "also"s
   #
   # Also make sure to handle syllables that have a - inside of it that indicates
   # alternate (?) options, which we can safely (?) get rid of
-  @alternate_regex ~r/\(-.*\)/
+  @alternate_regex ~r/\(.*\)/
   @spec parse_pronounciation(String.t) :: list(String.t)
   defp parse_pronounciation(pronounciation) do
-    [first | _ ] = String.split(pronounciation, [",", " also "])
+    [first | _ ] = String.split(pronounciation, [",", " also ", ";"])
     Regex.replace(@alternate_regex, first, "")
     |> String.split("-")
   end
