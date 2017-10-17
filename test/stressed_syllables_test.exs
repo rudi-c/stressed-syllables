@@ -22,16 +22,24 @@ defmodule StressedSyllablesTest do
     assert pronounciation == ["ˌkän", "stə", "ˈtü", "shən"]
   end
 
-  test "parse word alternate syllable" do
+  test "parse word with alternate syllable" do
     result = parse(
       "entirely",
       "adverb",
       "en·tire·ly",
       "in-ˈtī(-ə)r-lē")
-    %Word{ pofspeech: pofspeech, syllables: syllables, pronounciation: pronounciation } = result
-    assert pofspeech == "ADV"
-    assert syllables == ["en", "tire", "ly"]
+    %Word{ pronounciation: pronounciation } = result
     assert pronounciation == ["in", "ˈtīr", "lē"]
+  end
+
+  test "parse word with alternate stress and syllable" do
+    result = parse(
+      "intolerance",
+      "noun",
+      "in·tol·er·ance",
+      "(ˌ)in-ˈtäl-rən(t)s")
+    %Word{ pronounciation: pronounciation } = result
+    assert pronounciation == ["in", "ˈtäl", "rəns"]
   end
 
   test "parse geographical name" do

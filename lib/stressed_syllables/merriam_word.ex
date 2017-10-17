@@ -83,7 +83,7 @@ defmodule StressedSyllables.MerriamWord do
   #
   # Also make sure to handle syllables that have a - inside of it that indicates
   # alternate (?) options, which we can safely (?) get rid of
-  @alternate_regex ~r/\(.*\)/
+  @alternate_regex ~r/\([^\(]*\)/
   @spec parse_pronounciation(String.t) :: list(String.t)
   defp parse_pronounciation(pronounciation) do
     [first | _ ] = String.split(pronounciation, [",", " also ", ";"])
