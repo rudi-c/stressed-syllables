@@ -18,6 +18,9 @@ assets/node_modules
 # this depending on your deployment strategy.
 /priv/static/
 
+# Database folder
+Mnesia*
+
 # The config/prod.secret.exs file by default contains sensitive
 # data and you should not commit it into version control.
 #

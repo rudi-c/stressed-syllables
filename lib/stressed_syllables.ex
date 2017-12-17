@@ -18,6 +18,7 @@ defmodule StressedSyllables do
         supervisor(StressedSyllables.NLP, []),
         supervisor(StressedSyllables.MerriamLoader, []),
         supervisor(StressedSyllables.WordCache, []),
+        supervisor(StressedSyllables.NewWordCache, []),
         supervisor(StressedSyllables.LoadBalancer, []),
         supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
       ]
