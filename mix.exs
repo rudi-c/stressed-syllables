@@ -45,6 +45,7 @@ defmodule StressedSyllables.Mixfile do
      {:floki, "~> 0.17"},
      {:distillery, "~> 1.4", runtime: false},
      {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false},
+     {:hackney, "== 1.8.0", override: true}, # Temporary hack: https://github.com/bitwalker/distillery/issues/294
     ]
   end
 
