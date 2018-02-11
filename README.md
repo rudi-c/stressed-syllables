@@ -6,8 +6,7 @@ The application is functional, but currently "pre-launch" (pending polishing and
 
 ## Setup
 
-Assuming you have Elixir installed, and Postgres installed and running
-(see Elixir & Phoenix [setup guide](https://hexdocs.pm/phoenix/up_and_running.html))
+Assuming you have Elixir, pip and virtualenv installed
 
 ```
 mix deps.get
@@ -19,9 +18,9 @@ and run with
 
 ```
 # Master
-MASTER=true mix phoenix.server
+MASTER=true mix phx.server
 # Replica
-mix phoenix.server
+mix phx.server
 ```
 
 ## Type checking
