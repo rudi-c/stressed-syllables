@@ -1,7 +1,8 @@
 defmodule StressedSyllablesWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :stressed_syllables
 
-  socket "/socket", StressedSyllablesWeb.UserSocket
+  # Not using WebSockets in this application yet
+  # socket "/socket", StressedSyllablesWeb.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
