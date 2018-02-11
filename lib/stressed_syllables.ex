@@ -9,6 +9,7 @@ defmodule StressedSyllables do
 
     # Define workers and child supervisors to be supervised
     children = if Utils.is_master?() do
+      Logger.info "Started node #{Node.self()} as master"
       [
         # Start the Ecto repository
         # supervisor(StressedSyllables.Repo, []),
@@ -22,6 +23,7 @@ defmodule StressedSyllables do
         supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
       ]
     else
+      Logger.info "Started node #{Node.self()} as replica"
       [
         supervisor(StressedSyllables.NLP, []),
         supervisor(StressedSyllables.MerriamLoader, []),
@@ -29,8 +31,6 @@ defmodule StressedSyllables do
         supervisor(Task.Supervisor, [[name: StressedSyllables.RemoteTasks]])
       ]
     end
-
-    Logger.info "Started node #{Node.self()}"
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options

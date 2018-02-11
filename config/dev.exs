@@ -8,8 +8,9 @@ use Mix.Config
 # with brunch.io to recompile .js and .css sources.
 config :stressed_syllables, StressedSyllablesWeb.Endpoint,
   http: [port: System.get_env("PORT") || 4000],
+  url: [host: "localhost", port: System.get_env("PORT") || 4000],
+  server: true,
   debug_errors: true,
-  code_reloader: true,
   check_origin: false,
   watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
                     cd: Path.expand("../assets", __DIR__)]]
